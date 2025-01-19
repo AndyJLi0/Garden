@@ -7,8 +7,27 @@ import RecordIcon from "../components/SVGs/RecordIcon";
 import MapIcon from "../components/SVGs/MapIcon";
 import ProfileIcon from "../components/SVGs/ProfileIcon";
 import { StatusBar } from "expo-status-bar";
+import { useRef, useEffect } from "react";
+//import { callDuringRecord } from "../utilities/recordUtils";
 
 export default function RootLayout() {
+  // const locationUpdateIntervalRef = useRef(
+  //   setInterval(() => {
+  //     console.log("Location update interval");
+  //     //callDuringRecord();
+  //   }, 5000)
+  // );
+
+  // useEffect(() => {
+  //   return () => {
+  //     clearInterval(locationUpdateIntervalRef.current);
+  //   };
+  // }, [])
+
+  // const onStopRecord = () => {
+  //   clearInterval(locationUpdateIntervalRef.current);
+  // }
+
   return (
     <Tabs
       screenOptions={{

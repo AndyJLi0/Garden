@@ -32,8 +32,8 @@
         "expo-font",
         {
           "fonts": [
-            "node_modules/@expo-google-fonts/JosefinSans_400Regular.ttf",
-            "node_modules/@expo-google-fonts/JosefinSans_700Bold.ttf"
+            "node_modules/@expo-google-fonts/josefin-sans/JosefinSans_400Regular.ttf",
+            "node_modules/@expo-google-fonts/josefin-sans/JosefinSans_700Bold.ttf"
           ]
         }
       ]
