@@ -128,6 +128,7 @@ export default function Map(): JSX.Element {
     addActivities(activity);
 
     setPolylineLatLongs([]);
+    setStart(false);
     clearTime();
   };
   // how the timer should look like
@@ -154,11 +155,13 @@ export default function Map(): JSX.Element {
       return 0;
     }
     const prev = arr[i - 1];
-    const distance = calcDistance(
-      prev.latitude,
-      prev.longitude,
-      curr.latitude,
-      curr.longitude
+    const distance = Math.round(
+      calcDistance(
+        prev.latitude,
+        prev.longitude,
+        curr.latitude,
+        curr.longitude
+      ) * 1000
     );
     return acc + distance;
   }, 0);
@@ -262,7 +265,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          Km walked:{" "}
+          Distance walked:{" "}
         </Text>
         <Text
           style={{
@@ -271,7 +274,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          {distance}km
+          {distance}m
         </Text>
       </View>
       <View
@@ -316,7 +319,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          {user.session.steps} steps
+          {Math.round(distance / 0.6)} steps
         </Text>
       </View>
 
