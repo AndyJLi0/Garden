@@ -7,8 +7,12 @@ import {
   header2size,
   textPrimary,
   textSecondary,
-} from "../utilities/themeColors";
-import { convertMinutesToHoursAndMinutes } from "../utilities/convertMinToHandM";
+} from "../../utilities/themeColors";
+import { convertMinutesToHoursAndMinutes } from "../../utilities/convertMinToHandM";
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
+import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
+import { Link } from 'expo-router';
 
 const user = {
   name: "Jim",
@@ -31,6 +35,18 @@ export default function Map() {
   
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+        style={{
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            zIndex: 1, 
+        }} >
+        <Link href="../profile">
+            <AntDesign name="close" size={30} color="black" />
+        </Link>
+      </TouchableOpacity>
+
       <Text style={ styles.title }>Map</Text>
       <MapView 
         style={styles.map}

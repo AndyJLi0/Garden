@@ -6,8 +6,11 @@ import {
   header2size,
   textPrimary,
   textSecondary,
-} from "../utilities/themeColors";
+} from "../../utilities/themeColors";
 import { BlurView } from 'expo-blur';
+import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
+import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
+import { Link } from 'expo-router';
 
 const user = {
   name: "Jim",
@@ -20,15 +23,15 @@ const user = {
 };
 
 const imageData = [
-  { id: '1', uri: require("../assets/flower.png") },
-  { id: '2', uri: require("../assets/flower.png") },
-  { id: '3', uri: require("../assets/flower.png") },
+  { id: '1', uri: require("../../assets/flower.png") },
+  { id: '2', uri: require("../../assets/flower.png") },
+  { id: '3', uri: require("../../assets/flower.png") },
 ];
 
 const imageData2 = [
-  { id: '4', uri: require("../assets/flower.png") },
-  { id: '5', uri: require("../assets/flower.png") },
-  { id: '6', uri: require("../assets/flower.png") },
+  { id: '4', uri: require("../../assets/flower.png") },
+  { id: '5', uri: require("../../assets/flower.png") },
+  { id: '6', uri: require("../../assets/flower.png") },
 ];
 
 export default function Gacha() {
@@ -57,6 +60,18 @@ export default function Gacha() {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity 
+        style={{
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            zIndex: 1, 
+        }} >
+        <Link href="../profile">
+            <AntDesign name="close" size={30} color="black" />
+        </Link>
+      </TouchableOpacity>
+
       <Text style = { styles.title }>Collection</Text>
         <View style={ styles.rectangles }>
         <View style={styles.imageShelf}>
