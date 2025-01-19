@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet ,  TouchableOpacity,} from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, } from 'react-native';
 import MapView from 'react-native-maps';
 import {
   appBeige,
@@ -66,13 +66,22 @@ export default function Map(): JSX.Element {
   const [count, setCount] = useState(0);
   const [time, setTime] = useState("00:00:00");
   var initTime = new Date();
+  let interval: number | null = null; // Explicitly type interval as number | null
 
   const [distance, setDistance] = useState(0);
 
   const startActivity = () => {
     // start the timer. starts the periodic location update.
     setStart(true);
+    startCountingDistance();
   }
+
+  const startCountingDistance = () => {
+    interval = setInterval(() => {
+      setDistance((prevDistance) => prevDistance + 2); // Increment distance by 5 every 5 seconds
+    }, 2000) as unknown as number; // 5000ms = 5 seconds
+  };
+
 
   const pauseActivity = () => {
     // pauses the timer. pauses the periodic location update.
@@ -87,6 +96,7 @@ export default function Map(): JSX.Element {
   const finishActivity = () => {
     // stops timer, saves data to an activity. stops the periodic location update.
     const [minutes, seconds] = time.split(":").map(Number);
+
     const activityTime = minutes * 60 + seconds;
     const activity = {
       time: activityTime,
@@ -97,7 +107,7 @@ export default function Map(): JSX.Element {
     //createUser("bruh", "bruh@email.com");
     resetDistance(); //for new activity
     clearTime();
-    
+
   }
   // how the timer should look like
   const showTimer = (ms: number) => {
@@ -195,7 +205,7 @@ export default function Map(): JSX.Element {
         <Button title="Get Weather (remove later)" onPress={requestWeather} />
       </View> */}
 
-      
+
       <View style={{ flexDirection: "row" }}>
         <Text
           style={{
@@ -204,7 +214,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          Km walked:{" "}
+          Distance travelled:{" "}
         </Text>
         <Text
           style={{
@@ -213,7 +223,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          {user.session.walked}km
+          {distance}m
         </Text>
       </View>
       <View

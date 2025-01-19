@@ -27,7 +27,7 @@ export const addActivities = async(activities:{time:number, date:string, distanc
 
 export const getActivities = async() => {
     try {
-        const response = await fetch(`${CONFIG.IP}/get_acitivities`, {
+        const response = await fetch(`${CONFIG.IP}/get_activities`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -40,9 +40,10 @@ export const getActivities = async() => {
     
         const data = await response.json();
         console.log("activities:", data.activities);
+        return data.activities;
       } catch (error) {
         console.error("Error fetching activities:", error);
       }
 }
 
-//getActivities();
+//getActivities(); 
