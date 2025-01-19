@@ -50,6 +50,12 @@
             "usesCleartextTraffic": true
           }
         }
+      ],
+      [
+        "@rnmapbox/maps",
+        {
+          "RNMapboxMapsDownloadToken": "sk.eyJ1IjoiamltZ2VuZyIsImEiOiJjbTYzanByZzYxYmtxMmtvNjdpaG94Z3JwIn0.EYNGdSSNyYrDv_Gy387Uqg"
+        }
       ]
     ]
   }
