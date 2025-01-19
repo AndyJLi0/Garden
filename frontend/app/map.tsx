@@ -93,8 +93,8 @@ export default function Map(): JSX.Element {
       date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
       distance: distance,
     };
-    //addActivities(activity);
-    createUser("bruh", "bruh@email.com");
+    addActivities(activity);
+    //createUser("bruh", "bruh@email.com");
     resetDistance(); //for new activity
     clearTime();
     
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     //justifyContent: 'center', //vertical align
     height: "100%",
     paddingHorizontal: 20,
-    paddingTop: 80,
+    paddingTop: 60,
     backgroundColor: appBeige,
   },
   map: {
