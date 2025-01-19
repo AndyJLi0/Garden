@@ -182,7 +182,7 @@ def update_plants():
     # Get all plants (cactus, sunflower, or any other type)
     all_plants = Plant.query.all()
 
-    for plant in all_plants:
+    for plant in all_plants: 
         if did_workout:
             plant.age += plant.growth_per_day
         else:
@@ -220,6 +220,28 @@ def get_plants():
     json_plants = list(map(lambda x: x.to_json(), plants))
 
     return jsonify({"plants": json_plants})
+
+@app.route("/add_activity", methods=["POST"])
+def add_activity():
+    time = request.json.get("time")
+    date = request.json.get("date")
+    distance = request.json.get("distance")
+    
+    new_activity = Activity(time = time, date = date, distance = distance)
+    try:
+        db.session.add(new_activity)
+        db.session.commit()
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+
+    return jsonify({"message": "activity created"}), 201
+
+@app.route("/get_activities", methods=["GET"])
+def get_activities():
+    activities = Activity.query.all()
+    json_activities = list(map(lambda x: x.to_json(), activities))
+
+    return jsonify({"activities": json_activities})
 
 
 if __name__ == "__main__":
