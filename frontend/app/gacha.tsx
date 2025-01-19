@@ -1,5 +1,14 @@
-import { useState } from 'react'
-import { View, FlatList, StyleSheet, Image, Text, TouchableOpacity, Modal, ImageSourcePropType } from 'react-native';
+import { useState } from "react";
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  Image,
+  Text,
+  TouchableOpacity,
+  Modal,
+  ImageSourcePropType,
+} from "react-native";
 import {
   appBeige,
   header1size,
@@ -7,7 +16,6 @@ import {
   textPrimary,
   textSecondary,
 } from "../utilities/themeColors";
-import { BlurView } from 'expo-blur';
 
 const user = {
   name: "Jim",
@@ -15,30 +23,31 @@ const user = {
   session: {
     walked: 30,
     time: 150,
-    steps: 200
+    steps: 200,
   },
 };
 
 const imageData = [
-  { id: '1', uri: require("../assets/flower.png") },
-  { id: '2', uri: require("../assets/flower.png") },
-  { id: '3', uri: require("../assets/flower.png") },
+  { id: "1", uri: require("../assets/flower.png") },
+  { id: "2", uri: require("../assets/flower.png") },
+  { id: "3", uri: require("../assets/flower.png") },
 ];
 
 const imageData2 = [
-  { id: '4', uri: require("../assets/flower.png") },
-  { id: '5', uri: require("../assets/flower.png") },
-  { id: '6', uri: require("../assets/flower.png") },
+  { id: "4", uri: require("../assets/flower.png") },
+  { id: "5", uri: require("../assets/flower.png") },
+  { id: "6", uri: require("../assets/flower.png") },
 ];
 
 export default function Gacha() {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | null>(null);
+  const [selectedImage, setSelectedImage] =
+    useState<ImageSourcePropType | null>(null);
 
   // Handle click event for each image
   const handleImageClick = (id: string, uri: ImageSourcePropType) => {
-    console.log('Image clicked:', id);
-    openLightbox(uri)
+    console.log("Image clicked:", id);
+    openLightbox(uri);
   };
 
   // Function to open the modal with the selected image
@@ -53,15 +62,18 @@ export default function Gacha() {
     setSelectedImage(null);
   };
 
-  const total = 50
+  const total = 50;
 
   return (
     <View style={styles.container}>
-      <Text style = { styles.title }>Collection</Text>
-        <View style={ styles.rectangles }>
+      <Text style={styles.title}>Collection</Text>
+      <View style={styles.rectangles}>
         <View style={styles.imageShelf}>
           {imageData.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.id, item.uri)}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleImageClick(item.id, item.uri)}
+            >
               <Image source={item.uri} style={styles.image} />
             </TouchableOpacity>
           ))}
@@ -69,7 +81,10 @@ export default function Gacha() {
         <View style={styles.rectangle}></View>
         <View style={styles.imageShelf}>
           {imageData2.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.id, item.uri)}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleImageClick(item.id, item.uri)}
+            >
               <Image source={item.uri} style={styles.image} />
             </TouchableOpacity>
           ))}
@@ -77,14 +92,17 @@ export default function Gacha() {
         <View style={styles.rectangle}></View>
         <View style={styles.imageShelf}>
           {imageData.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.id, item.uri)}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleImageClick(item.id, item.uri)}
+            >
               <Image source={item.uri} style={styles.image} />
             </TouchableOpacity>
           ))}
         </View>
         <View style={styles.rectangle}></View>
       </View>
-      
+
       <Text
         style={{
           fontFamily: "JosefinSans_700Bold",
@@ -116,25 +134,29 @@ export default function Gacha() {
       </View>
 
       {/* Lightbox */}
-        <Modal
-          visible={isModalVisible}
-          transparent={true}
-          animationType="fade"
-          onRequestClose={closeLightbox}
+      <Modal
+        visible={isModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={closeLightbox}
+      >
+        <TouchableOpacity
+          style={styles.modalBackground}
+          onPress={closeLightbox}
         >
-          <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
-          <BlurView intensity={40}>
-              <View style={styles.modalContent}>
-                {selectedImage && (
-                  <Image source={selectedImage} style={styles.modalImage} />
-                )}
-                <TouchableOpacity style={styles.closeButton} onPress={closeLightbox}>
-                  <Text style={styles.closeText}>Close</Text>
-                </TouchableOpacity>
-              </View>
-            </BlurView>
-          </TouchableOpacity>
-        </Modal>
+          <View style={styles.modalContent}>
+            {selectedImage && (
+              <Image source={selectedImage} style={styles.modalImage} />
+            )}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={closeLightbox}
+            >
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </View>
   );
 }
@@ -149,22 +171,22 @@ const styles = StyleSheet.create({
   },
   shelfTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
   },
   rectangles: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   rectangle: {
-    width: '90%',       // Rectangle width
-    height: 25,      // Rectangle height
+    width: "90%", // Rectangle width
+    height: 25, // Rectangle height
     borderRadius: 10,
-    backgroundColor: '#7B5A5A', // Blue color for the rectangle
+    backgroundColor: "#7B5A5A", // Blue color for the rectangle
   },
   imageShelf: {
-    flexDirection: 'row',      // Align items horizontally
-    flexWrap: 'wrap',          // Allow wrapping of items when they overflow
-    justifyContent: 'center',  // Center images horizontally
+    flexDirection: "row", // Align items horizontally
+    flexWrap: "wrap", // Allow wrapping of items when they overflow
+    justifyContent: "center", // Center images horizontally
   },
   image: {
     width: 100,
@@ -181,21 +203,21 @@ const styles = StyleSheet.create({
   },
   modalBackground: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent background
   },
   modalContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
   },
   modalImage: {
     width: 300,
     height: 300,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   closeButton: {
     marginTop: 20,
@@ -205,8 +227,8 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   closeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
