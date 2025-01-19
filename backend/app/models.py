@@ -12,7 +12,7 @@ class User(db.Model):
             "email": self.email
         }
 
-class Acitivty(db.Model):
+class Activity(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     time = db.Column(db.Integer, primary_key = False) #in seconds
     date = db.Column(db.String(20), unique = False, nullable = False)
@@ -31,7 +31,7 @@ class Plant(db.Model):
     
     name = db.Column(db.String(20), primary_key = True, nullable = False)
     growth_per_day = db.Column(db.Integer, nullable=False) # 4 == grows 4 age units per 1 day of acitivity.  
-    loss_per_day = db.COlumn(db.Integer, nullable=False) # 2 == loses 2 age units per 1 day of activity.
+    loss_per_day = db.Column(db.Integer, nullable=False) # 2 == loses 2 age units per 1 day of activity.
     age = db.Column(db.Integer, nullable=False) #[0, 100]
     status = db.Column(db.String(40), nullable=False) # "health", "sick", "dead"
     rarity = db.Column(db.Integer, nullable=False) # [1,5] 5 is rarest.
