@@ -1,4 +1,4 @@
-const addActivities = async(activities:{time:number, date:string, distance:number}) => {
+export const addActivities = async(activities:{time:number, date:string, distance:number}) => {
     try {
         const response = await fetch("http://127.0.0.1:5000/add_activity", {
           method: "POST",
@@ -7,6 +7,8 @@ const addActivities = async(activities:{time:number, date:string, distance:numbe
           },
           body: JSON.stringify(activities),
         });
+        
+        console.log(response)
     
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -21,7 +23,7 @@ const addActivities = async(activities:{time:number, date:string, distance:numbe
 
 //addActivities({time: 30, date: "some date", distance: 50})
 
-const getActivities = async() => {
+export const getActivities = async() => {
     try {
         const response = await fetch("http://127.0.0.1:5000/get_activities", {
           method: "GET",

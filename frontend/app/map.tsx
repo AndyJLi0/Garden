@@ -11,8 +11,9 @@ import {
 import { convertMinutesToHoursAndMinutes } from "../utilities/convertMinToHandM";
 import { OPEN_WEATHER_API_KEY } from "./apiKey";
 import { parseWeatherResponse, parseLocationResponse } from "../utilities/parseInfo";
+import { addActivities } from "../utilities/activityFunctions";
 import GetLocation from "react-native-get-location";
-
+import { createUser } from "../utilities/userFunctions";
 const user = {
   name: "Jim",
   session: {
@@ -66,6 +67,7 @@ export default function Map(): JSX.Element {
   const [time, setTime] = useState("00:00:00");
   var initTime = new Date();
 
+  const [distance, setDistance] = useState(0);
 
   const startActivity = () => {
     // start the timer. starts the periodic location update.
@@ -78,9 +80,24 @@ export default function Map(): JSX.Element {
 
   }
 
+  const resetDistance = () => {
+    setDistance(0);
+  }
+
   const finishActivity = () => {
     // stops timer, saves data to an activity. stops the periodic location update.
+    const [minutes, seconds] = time.split(":").map(Number);
+    const activityTime = minutes * 60 + seconds;
+    const activity = {
+      time: activityTime,
+      date: new Date().toISOString().split("T")[0], // YYYY-MM-DD
+      distance: distance,
+    };
+    //addActivities(activity);
+    createUser("bruh", "bruh@email.com");
+    resetDistance(); //for new activity
     clearTime();
+    
   }
   // how the timer should look like
   const showTimer = (ms: number) => {
@@ -116,7 +133,7 @@ export default function Map(): JSX.Element {
         setTime("00:00:00:00");
         clearInterval(id);
       }
-    }, 10); //10 ms
+    }, 16); //10 ms
     return () => clearInterval(id);
   }, [start]);
 
@@ -125,6 +142,7 @@ export default function Map(): JSX.Element {
   var lat = 41.40338;
   var lon = 2.17403;
 
+  // used to get weather data
   const requestWeather = async () => {
     try {
       setWeatherLoading(true);
