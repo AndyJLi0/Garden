@@ -60,7 +60,7 @@ export default function RootLayout() {
         name="inventory"
         options={{
           title: "Inventory",
-          tabBarIcon: ({ color }) => <MapIcon />,
+          tabBarIcon: ({ color }) => <RecordIcon />,
         }}
       />
       <Tabs.Screen

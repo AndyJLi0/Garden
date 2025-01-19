@@ -16,8 +16,10 @@ const user = {
     steps: 200
   },
 };
-import { useState } from 'react'
+import { useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react'
 import { ImageSourcePropType } from 'react-native';
+import { getActivities } from '../../utilities/activityFunctions';
+
 const imageData = [
   { id: '1', uri: require("../../assets/profile.png") },
   { id: '2', uri: require("../../assets/profile.png") },
@@ -31,6 +33,13 @@ const recordData = [
   { id: '4', uri: require("../../assets/flower.png"), text: "09.03.2024              5km" },
 ];
 
+type Activity = {
+  time: number;
+  date: string;
+  distance: number;
+  id: number;
+}
+
 export default function Profile() {
   // Edit profile action (just logs for now)
   const handleEditProfile = () => {
@@ -39,29 +48,45 @@ export default function Profile() {
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | null>(null);
-  
-    // Handle click event for each image
-    const handleImageClick = ( uri: ImageSourcePropType) => {
-      openLightbox(uri)
-    };
-  
-    // Function to open the modal with the selected image
-    const openLightbox = (uri: ImageSourcePropType) => {
-      setSelectedImage(uri);
-      setIsModalVisible(true);
-    };
-  
-    // Function to close the modal
-    const closeLightbox = () => {
-      setIsModalVisible(false);
-      setSelectedImage(null);
-    };
+  const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | null>(null);
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  // Handle click event for each image
+  const handleImageClick = (uri: ImageSourcePropType) => {
+    openLightbox(uri)
+  };
+
+  // Function to open the modal with the selected image
+  const openLightbox = (uri: ImageSourcePropType) => {
+    setSelectedImage(uri);
+    setIsModalVisible(true);
+  };
+
+  // Function to close the modal
+  const closeLightbox = () => {
+    setIsModalVisible(false);
+    setSelectedImage(null);
+  };
+
+  // Function to handle fetching and setting activities
+  const fetchActivities = async () => {
+    try {
+      const data = await getActivities(); // ACITIVTY[]
+      setActivities(data); // Update state with the fetched activities
+    } catch (error) {
+      console.error("Error fetching activities:", error);
+      setActivities([]); // Ensure activities is always an array, even on error
+    }
+  };
+
+  useEffect(() => {
+    fetchActivities();
+  }, []);
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-      <Text style={styles.title}>Profile</Text>
+        <Text style={styles.title}>Profile</Text>
         {/* Profile Picture */}
         <View style={styles.profileHeader}>
           <Image source={require("../../assets/profile.png")} style={styles.profileImage} />
@@ -82,13 +107,18 @@ export default function Profile() {
           ))}
         </View>
 
+        {/* records in formate time as numebr, date as string, distance as number */}
         {/* Records */}
         <Text style={styles.friendsName}>Records</Text>
+
         <View style={styles.imageShelf}>
-          {recordData.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.uri)}>
+          {activities.map((item) => (
+            <TouchableOpacity key={item.id}>
               <View style={styles.record}>
-                <Text style={styles.recordText}>{item.text}</Text>
+                <Text style={styles.recordText}>ID: {item.id}</Text>
+                <Text style={styles.recordText}>Time: {item.time}s</Text>
+                <Text style={styles.recordText}>Date: {item.date}</Text>
+                <Text style={styles.recordText}>Distance: {item.distance} meters</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -108,14 +138,14 @@ export default function Profile() {
         onRequestClose={closeLightbox}
       >
         <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
-            <View style={styles.modalContent}>
-              {selectedImage && (
-                <Image source={selectedImage} style={styles.modalImage} />
-              )}
-              <TouchableOpacity style={styles.closeButton} onPress={closeLightbox}>
-                <Text style={styles.closeText}>Close</Text>
-              </TouchableOpacity>
-            </View>
+          <View style={styles.modalContent}>
+            {selectedImage && (
+              <Image source={selectedImage} style={styles.modalImage} />
+            )}
+            <TouchableOpacity style={styles.closeButton} onPress={closeLightbox}>
+              <Text style={styles.closeText}>Close</Text>
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
       </Modal>
     </View>
@@ -177,15 +207,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginTop: 10,
     borderRadius: 10,
+    padding: 5,
   },
   recordText: {
     fontFamily: "JosefinSans_700Bold",
-    fontSize: header2size,
+    fontSize: 16,
     color: textPrimary,
     justifyContent: "center",
     alignContent: "center",
-    marginTop: 30,
-    marginLeft: 20,
+    // marginTop: 30,
+    // marginLeft: 20,
+
   },
   scrollViewContent: {
     alignItems: 'center', // Center content inside ScrollView
