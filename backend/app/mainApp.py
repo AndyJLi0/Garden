@@ -221,6 +221,14 @@ def get_plants():
 
     return jsonify({"plants": json_plants})
 
+@app.route("/delete_plants", methods=["DELETE"])
+def delete_plants():
+    plants = Plant.query.delete()
+
+    db.session.commit()
+
+    return jsonify({"message": "plants deleted"}), 201
+
 @app.route("/add_activity", methods=["POST"])
 def add_activity():
     time = request.json.get("time")
@@ -242,6 +250,14 @@ def get_activities():
     json_activities = list(map(lambda x: x.to_json(), activities))
 
     return jsonify({"activities": json_activities})
+
+@app.route("/delete_activities", methods=["DELETE"])
+def delete_activities():
+    activities = Activity.query.delete()
+
+    db.session.commit()
+
+    return jsonify({"message": "activities deleted"}), 201
 
 
 if __name__ == "__main__":
