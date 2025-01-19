@@ -1,6 +1,13 @@
 from flask import request, jsonify
 from config import app, db
 from models import User
+from models import Plant
+from models import Cactus
+from models import Sunflower
+from models import Moonflower
+from models import Cherryblossom
+from models import Waterlily
+from models import Activity
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -60,6 +67,153 @@ def update_user(user_id):
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
+
+@app.route("/create_cactus", methods=["POST"])
+def create_cactus():
+    # Since name is the PK and is always "cactus" for a Cactus,
+    # we can do:
+    existing_cactus = Cactus.query.get("cactus")  
+    if existing_cactus:
+        # Already exists, so just return
+        return jsonify({
+            "message": "A cactus already exists.",
+            "plant": existing_cactus.to_json()
+        }), 200
+
+    # Otherwise, create a new Cactus
+    new_cactus = Cactus()  # defaults: age=20, status="healthy"
+    db.session.add(new_cactus)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Cactus created.",
+        "plant": new_cactus.to_json()
+    }), 201
+    
+@app.route("/create_sunflower", methods=["POST"])
+def create_sunflower():
+    
+    existing_sunflower = Sunflower.query.get("sunflower")  
+    if existing_sunflower:
+        # Already exists, so just return
+        return jsonify({
+            "message": "A sunflower already exists.",
+            "plant": existing_sunflower.to_json()
+        }), 200 
+
+    new_sunflower = Sunflower()  # defaults: age=20, status="healthy"
+    db.session.add(new_sunflower)
+    db.session.commit()
+
+    return jsonify({
+        "message": "sunflower created.",
+        "plant": new_sunflower.to_json()
+    }), 201
+    
+@app.route("/create_moonflower", methods=["POST"])
+def create_moonflower():
+    
+    existing_moonflower = Moonflower.query.get("moonflower")  
+    if existing_moonflower:
+        # Already exists, so just return
+        return jsonify({
+            "message": "A moonflower already exists.",
+            "plant": existing_moonflower.to_json()
+        }), 200 
+
+    new_moonflower = Moonflower()  # defaults: age=20, status="healthy"
+    db.session.add(new_moonflower)
+    db.session.commit()
+
+    return jsonify({
+        "message": "moonflower created.",
+        "plant": new_moonflower.to_json()
+    }), 201
+    
+@app.route("/create_cherryblossom", methods=["POST"])
+def create_cherryblossom():
+    
+    existing_cherryblossom = Cherryblossom.query.get("cherryblossom")  
+    if existing_cherryblossom:
+        # Already exists, so just return
+        return jsonify({
+            "message": "A cherry blossom already exists.",
+            "plant": existing_cherryblossom.to_json()
+        }), 200 
+
+    new_cherryblossom = Cherryblossom()  # defaults: age=20, status="healthy"
+    db.session.add(new_cherryblossom)
+    db.session.commit()
+
+    return jsonify({
+        "message": "cherry blossom created.",
+        "plant": new_cherryblossom.to_json()
+    }), 201
+
+@app.route("/create_waterlily", methods=["POST"])
+def create_waterlily():
+    
+    existing_waterlily = Waterlily.query.get("waterlily")  
+    if existing_waterlily:
+        # Already exists, so just return
+        return jsonify({
+            "message": "A waterlily already exists.",
+            "plant": existing_waterlily.to_json()
+        }), 200 
+
+    new_waterlily = Waterlily()  # defaults: age=20, status="healthy"
+    db.session.add(new_waterlily)
+    db.session.commit()
+
+    return jsonify({
+        "message": "water lily created.",
+        "plant": new_waterlily.to_json()
+    }), 201
+    
+
+@app.route("/update_plants", methods=["POST"])
+def update_plants():
+    data = request.get_json()
+    did_workout = data.get("DidWorkoutToday")
+
+    if did_workout is None:
+        return jsonify({"error": "Must include DidWorkoutToday boolean"}), 400
+
+    # Get all plants (cactus, sunflower, or any other type)
+    all_plants = Plant.query.all()
+
+    for plant in all_plants:
+        if did_workout:
+            plant.age += plant.growth_per_day
+        else:
+            plant.age -= plant.loss_per_day
+
+        # Example: clamp age to [0..100]
+        if plant.age < 0:
+            plant.age = 0
+        if plant.age > 100:
+            plant.age = 100
+
+        # Optional: update status if age hits 0
+        # if plant.age == 0:
+        #    plant.status = "dead"
+        if plant.age >= 15:
+            plant.status = "healthy"
+        if plant.age < 15:
+            plant.status = "sick"
+        if plant.age == 0:
+            plant.status = "dead"
+        
+        db.session.add(plant)
+
+    db.session.commit()
+
+    updated_plants = [p.to_json() for p in all_plants]
+    return jsonify({
+        "message": "Plants updated",
+        "plants": updated_plants
+    }), 200
+
 
 
 if __name__ == "__main__":
