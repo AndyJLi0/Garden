@@ -6,6 +6,7 @@ import GachaIcon from "../components/SVGs/GachaIcon";
 import RecordIcon from "../components/SVGs/RecordIcon";
 import MapIcon from "../components/SVGs/MapIcon";
 import ProfileIcon from "../components/SVGs/ProfileIcon";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   return (
