@@ -50,9 +50,9 @@ export default function RootLayout() {
         }}
       />
       <Tabs.Screen
-        name="map"
+        name="record"
         options={{
-          title: "Map",
+          title: "record",
           tabBarIcon: ({ color }) => <RecordIcon />,
         }}
       />
@@ -60,7 +60,7 @@ export default function RootLayout() {
         name="inventory"
         options={{
           title: "Inventory",
-          tabBarIcon: ({ color }) => <MapIcon />,
+          tabBarIcon: ({ color }) => <RecordIcon />,
         }}
       />
       <Tabs.Screen

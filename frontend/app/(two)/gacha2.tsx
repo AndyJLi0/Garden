@@ -7,7 +7,6 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
-import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
 import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
 import { Link } from 'expo-router';
@@ -138,7 +137,6 @@ export default function Gacha() {
           onRequestClose={closeLightbox}
         >
           <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
-          <BlurView intensity={40}>
               <View style={styles.modalContent}>
                 {selectedImage && (
                   <Image source={selectedImage} style={styles.modalImage} />
@@ -147,7 +145,6 @@ export default function Gacha() {
                   <Text style={styles.closeText}>Close</Text>
                 </TouchableOpacity>
               </View>
-            </BlurView>
           </TouchableOpacity>
         </Modal>
     </View>

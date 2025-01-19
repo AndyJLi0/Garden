@@ -7,7 +7,6 @@ import {
 } from "../../utilities/themeColors";
 import { Link } from 'expo-router';
 import { Modal } from 'react-native';
-import { BlurView } from 'expo-blur';
 const user = {
   name: "Jim",
   profilePic: "",
@@ -109,7 +108,6 @@ export default function Profile() {
         onRequestClose={closeLightbox}
       >
         <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
-        <BlurView intensity={40}>
             <View style={styles.modalContent}>
               {selectedImage && (
                 <Image source={selectedImage} style={styles.modalImage} />
@@ -118,7 +116,6 @@ export default function Profile() {
                 <Text style={styles.closeText}>Close</Text>
               </TouchableOpacity>
             </View>
-          </BlurView>
         </TouchableOpacity>
       </Modal>
     </View>

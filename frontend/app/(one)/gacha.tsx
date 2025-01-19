@@ -16,7 +16,6 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
-import { BlurView } from 'expo-blur';
 
 const user = {
   name: "Jim",
