@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { Text, View, StyleSheet ,  TouchableOpacity,} from 'react-native';
 import MapView from 'react-native-maps';
 import {
   appBeige,
@@ -9,10 +9,9 @@ import {
   textSecondary,
 } from "../../utilities/themeColors";
 import { convertMinutesToHoursAndMinutes } from "../../utilities/convertMinToHandM";
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
-import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
-import { Link } from 'expo-router';
+import { OPEN_WEATHER_API_KEY } from "./apiKey";
+import { parseWeatherResponse, parseLocationResponse } from "../../utilities/parseInfo";
+import GetLocation from "react-native-get-location";
 
 const user = {
   name: "Jim",
@@ -23,32 +22,142 @@ const user = {
   },
 };
 
+
+// var previouslat = 0;
+// var previouslon = 0;
+
+const callDuringRecord = () => {
+  //
+}
+
+
 const INITIAL_REGION = {
-	latitude: 49.31,
-	longitude: -123.2,
-	latitudeDelta: 0.005,
-	longitudeDelta: 0.005
+  latitude: 49.31,
+  longitude: -123.2,
+  latitudeDelta: 0.005,
+  longitudeDelta: 0.005
 };
 
-export default function Map() {
-  const hm = convertMinutesToHoursAndMinutes(user.session.time);
-  
+
+const requestLocation = async () => {
+  const coords = await GetLocation.getCurrentPosition({
+    enableHighAccuracy: true,
+    timeout: 30000,
+    rationale: {
+      title: "Location permission",
+      message: "The app needs the permission to request your location.",
+      buttonPositive: "Ok",
+    },
+  });
+  return parseLocationResponse(coords);
+};
+
+export default function Map(): JSX.Element {
+  //const hm = convertMinutesToHoursAndMinutes(user.session.time);
+
+  // NEW: State for weather data
+  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherLoading, setWeatherLoading] = useState<boolean>(false);
+  const [weatherError, setWeatherError] = useState<string | null>(null);
+
+  // for timer
+  const [start, setStart] = useState(false);
+  const [count, setCount] = useState(0);
+  const [time, setTime] = useState("00:00:00");
+  var initTime = new Date();
+
+
+  const startActivity = () => {
+    // start the timer. starts the periodic location update.
+    setStart(true);
+  }
+
+  const pauseActivity = () => {
+    // pauses the timer. pauses the periodic location update.
+    setStart(false);
+
+  }
+
+  const finishActivity = () => {
+    // stops timer, saves data to an activity. stops the periodic location update.
+    clearTime();
+  }
+  // how the timer should look like
+  const showTimer = (ms: number) => {
+    const milliseconds = Math.floor((ms % 1000) / 10)
+      .toString()
+      .padStart(2, "0");
+    const second = Math.floor((ms / 1000) % 60)
+      .toString()
+      .padStart(2, "0");
+    const minute = Math.floor((ms / 1000 / 60) % 60)
+      .toString()
+      .padStart(2, "0");
+    setTime(
+      minute + ":" + second + ":" + milliseconds
+    );
+  };
+  // sets time to zero
+  const clearTime = () => {
+    setTime("00:00:00");
+    setCount(0);
+  };
+
+  // update timer
+  useEffect(() => {
+    if (!start) {
+      return;
+    }
+    var id = setInterval(() => {
+      var left = count + (new Date().getTime() - initTime.getTime());
+      setCount(left);
+      showTimer(left);
+      if (left <= 0) {
+        setTime("00:00:00:00");
+        clearInterval(id);
+      }
+    }, 10); //10 ms
+    return () => clearInterval(id);
+  }, [start]);
+
+
+  // somewhere in spain
+  var lat = 41.40338;
+  var lon = 2.17403;
+
+  const requestWeather = async () => {
+    try {
+      setWeatherLoading(true);
+      setWeatherData(null);
+      setWeatherError(null);
+
+      // TRY TO GET COORDS BEFORE WEATHER, IDK IF THIS WORKS
+      const parsedCoords = await requestLocation();
+      lat = parsedCoords.latitude ?? 41.40338;
+      lon = parsedCoords.longitude ?? 2.17403;
+
+      const url = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${OPEN_WEATHER_API_KEY}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Failed to fetch weather data");
+      }
+
+      const data = await response.json();
+      const parsed = parseWeatherResponse(data);
+      setWeatherData(parsed);
+    } catch (err) {
+      console.log("weather fetch error");
+      setWeatherError((err as Error).message);
+    } finally {
+      setWeatherLoading(false);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity 
-        style={{
-            position: 'absolute',
-            top: 20,
-            right: 20,
-            zIndex: 1, 
-        }} >
-        <Link href="../profile">
-            <AntDesign name="close" size={30} color="black" />
-        </Link>
-      </TouchableOpacity>
 
-      <Text style={ styles.title }>Map</Text>
-      <MapView 
+      <Text style={styles.title}>Map</Text>
+      <MapView
         style={styles.map}
         initialRegion={INITIAL_REGION}
         showsUserLocation
@@ -63,6 +172,12 @@ export default function Map() {
       >
         Today
       </Text>
+
+      {/* <View style={styles.button}>
+        <Button title="Get Weather (remove later)" onPress={requestWeather} />
+      </View> */}
+
+      
       <View style={{ flexDirection: "row" }}>
         <Text
           style={{
@@ -104,9 +219,10 @@ export default function Map() {
             color: textSecondary,
           }}
         >
-          {hm.hours}h {hm.minutes}m
+          {time}
         </Text>
       </View>
+
       <View style={{ flexDirection: "row" }}>
         <Text
           style={{
@@ -127,33 +243,88 @@ export default function Map() {
           {user.session.steps} steps
         </Text>
       </View>
+
+
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
+        {/* Start Button */}
+        {start ? (
+          <TouchableOpacity style={styles.button} onPress={pauseActivity}>
+            <Text style={styles.buttonText}>Pause</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={startActivity}>
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Finish Button */}
+        <TouchableOpacity style={[styles.button, styles.finishButton]} onPress={finishActivity}>
+          <Text style={styles.buttonText}>Finish</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      borderRadius: 20,
-      overflow: 'hidden',
-      //justifyContent: 'center', //vertical align
-      height: "100%",
-      paddingHorizontal: 20,
-      paddingTop: 80,
-      backgroundColor: appBeige,
-    },
-    map: {
-        width: '100%',
-        height: '60%',
-        borderRadius: 20,
-        overflow: 'hidden',
-    },
-    title: {
-      fontFamily: "JosefinSans_700Bold",
-      fontSize: header1size,
-      color: textPrimary,
-      textAlign: "center",
-    },
+  container: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: 'hidden',
+    //justifyContent: 'center', //vertical align
+    height: "100%",
+    paddingHorizontal: 20,
+    paddingTop: 80,
+    backgroundColor: appBeige,
+  },
+  map: {
+    width: '100%',
+    height: '60%',
+    borderRadius: 20,
+    overflow: 'hidden',
+    padding: 20,
+  },
+  title: {
+    fontFamily: "JosefinSans_700Bold",
+    fontSize: header1size,
+    color: textPrimary,
+    textAlign: "center",
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: "center",
+    margin: 10,
+  },
+  instructions: {
+    textAlign: "center",
+    color: "#333333",
+    marginBottom: 5,
+  },
+  location: {
+    color: "#333333",
+    marginBottom: 5,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20, // Rounded border
+    borderWidth: 2, // Add a border
+    borderColor: "#333333", // Match the color of your text
+    alignItems: "center",
+    flex: 1, // Make buttons take up equal space
+    marginHorizontal: 5, // Add spacing between buttons
+  },
+  startButton: {
+    backgroundColor: "transparent", // Keep it transparent to match textSecondary
+  },
+  finishButton: {
+    backgroundColor: "transparent", // Transparent for consistent design
+  },
+  buttonText: {
+    fontFamily: "JosefinSans_700Bold", // Match your text font
+    fontSize: 18, // Match header2size
+    color: "#333333", // Match textSecondary
+  },
 });
 
 // import React, { useState } from "react";
