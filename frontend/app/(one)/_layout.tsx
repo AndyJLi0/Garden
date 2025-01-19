@@ -1,11 +1,11 @@
 import { View, Text } from "react-native";
-import Nav from "../components/nav";
+import Nav from "../../components/nav";
 import { Tabs } from "expo-router";
-import HomeIcon from "../components/SVGs/HomeIcon";
-import GachaIcon from "../components/SVGs/GachaIcon";
-import RecordIcon from "../components/SVGs/RecordIcon";
-import MapIcon from "../components/SVGs/MapIcon";
-import ProfileIcon from "../components/SVGs/ProfileIcon";
+import HomeIcon from "../../components/SVGs/HomeIcon";
+import GachaIcon from "../../components/SVGs/GachaIcon";
+import RecordIcon from "../../components/SVGs/RecordIcon";
+import MapIcon from "../../components/SVGs/MapIcon";
+import ProfileIcon from "../../components/SVGs/ProfileIcon";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useEffect } from "react";
 //import { callDuringRecord } from "../utilities/recordUtils";

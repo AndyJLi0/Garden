@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import RoseBlooming from "../components/SVGs/Rose/RoseBlooming";
+import RoseBlooming from "../../components/SVGs/Rose/RoseBlooming";
 import { useFonts } from "expo-font";
 import {
   JosefinSans_400Regular,
@@ -12,8 +12,13 @@ import {
   header2size,
   textPrimary,
   textSecondary,
-} from "../utilities/themeColors";
-import { convertMinutesToHoursAndMinutes } from "../utilities/convertMinToHandM";
+} from "../../utilities/themeColors";
+import { convertMinutesToHoursAndMinutes } from "../../utilities/convertMinToHandM";
+import React from 'react';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
+import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
+import { Link } from 'expo-router';
 
 export default function Home() {
   useFonts({
@@ -22,7 +27,7 @@ export default function Home() {
   });
 
   const user = {
-    name: "Jim",
+    name: "Andy",
     session: {
       walked: 30,
       time: 150,
@@ -41,6 +46,18 @@ export default function Home() {
         backgroundColor: appBeige,
       }}
     >
+        <TouchableOpacity 
+        style={{
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            zIndex: 1, 
+        }} >
+        <Link href="../profile">
+            <AntDesign name="close" size={30} color="black" />
+        </Link>
+      </TouchableOpacity>
+
       <Text
         style={{
           fontFamily: "JosefinSans_700Bold",
@@ -57,8 +74,22 @@ export default function Home() {
           paddingVertical: 60,
         }}
       >
-        {flower}
+        
       </View>
+
+      <Text
+        style={{
+          fontFamily: "JosefinSans_400Regular",
+          fontSize: header2size,
+          color: textPrimary,
+          justifyContent: "center",
+          alignContent: "center",
+          textAlign: "center",
+          marginTop: 0
+        }}>
+        Tulip
+      </Text>
+
       <Text
         style={{
           fontFamily: "JosefinSans_700Bold",
