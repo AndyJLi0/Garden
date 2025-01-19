@@ -1,11 +1,14 @@
 
 # Blossom
-
-
+Blossom is a mobile app that incentivises users to go outside and stay active in a fun and rewarding way. We wanted to combine health and wellness with sustainability and mindfulness. Many fitness apps focus solely on personal progress, so we thought, why not create something that reflects growth not only in ourselves but also in the world around us? A virtual garden that blossoms through physical exercise was the perfect way to merge physical activity with an interactive and visually rewarding experience.
 
 ## Screenshots
 
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+![App Screenshot](/assets/screenshot1.png)
+![App Screenshot](/assets/screenshot2.png)
+![App Screenshot](/assets/screenshot3.png)
+![App Screenshot](/assets/screenshot4.png)
+
 
 
 ## Features
