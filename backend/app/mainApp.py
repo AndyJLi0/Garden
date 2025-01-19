@@ -171,7 +171,7 @@ def create_waterlily():
     }), 201
     
 
-@app.route("/update_plants", methods=["POST"])
+@app.route("/update_plants", methods=["PATCH"])
 def update_plants():
     data = request.get_json()
     did_workout = data.get("DidWorkoutToday")
@@ -214,6 +214,12 @@ def update_plants():
         "plants": updated_plants
     }), 200
 
+@app.route("/get_plants", methods=["GET"])
+def get_plants():
+    plants = Plant.query.all()
+    json_plants = list(map(lambda x: x.to_json(), plants))
+
+    return jsonify({"plants": json_plants})
 
 
 if __name__ == "__main__":
