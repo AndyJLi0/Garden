@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Platform,
   StyleSheet,
@@ -49,6 +49,15 @@ const styles = StyleSheet.create({
   },
 });
 
+// var previouslat = 0;
+// var previouslon = 0;
+
+const callDuringRecord = () => {
+  //
+}
+
+
+
 const requestLocation = async () => {
   const coords = await GetLocation.getCurrentPosition({
     enableHighAccuracy: true,
@@ -67,6 +76,65 @@ export default function Map(): JSX.Element {
   const [weatherData, setWeatherData] = useState<any>(null);
   const [weatherLoading, setWeatherLoading] = useState<boolean>(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
+
+  // for timer
+  const [start, setStart] = useState(false);
+  const [count, setCount] = useState(0);
+  const [time, setTime] = useState("00:00:00");
+  var initTime = new Date();
+
+
+  const startActivity = () => {
+    // start the timer. starts the periodic location update.
+    setStart(true);
+  }
+  
+  const pauseActivity = () => {
+    // pauses the timer. pauses the periodic location update.
+    setStart(false);
+
+  }
+
+  const finishActivity = () => {
+    // stops timer, saves data to an activity. stops the periodic location update.
+    clearTime();
+  }
+  const showTimer = (ms: number) => {
+    const milliseconds = Math.floor((ms % 1000) / 10)
+      .toString()
+      .padStart(2, "0");
+    const second = Math.floor((ms / 1000) % 60)
+      .toString()
+      .padStart(2, "0");
+    const minute = Math.floor((ms / 1000 / 60) % 60)
+      .toString()
+      .padStart(2, "0");
+    setTime(
+      minute + ":" + second + ":" + milliseconds
+    );
+  };
+
+  const clearTime = () => {
+    setTime("00:00:00");
+    setCount(0);
+  };
+
+  useEffect(() => {
+    if (!start) {
+      return;
+    }
+    var id = setInterval(() => {
+      var left = count + (new Date().getTime() - initTime.getTime());
+      setCount(left);
+      showTimer(left);
+      if (left <= 0) {
+        setTime("00:00:00:00");
+        clearInterval(id);
+      }
+    }, 10); //10 ms
+    return () => clearInterval(id);
+  }, [start]);
+
 
   // somewhere in spain
   var lat = 41.40338;
@@ -100,25 +168,24 @@ export default function Map(): JSX.Element {
     }
   };
 
+
+
   return (
     <View style={styles.container}>
-      <Text style={styles.welcome}>Welcome to React Native!</Text>
-      <Text style={styles.instructions}>
-        To get location, press the button:
-      </Text>
+      <Text style={styles.welcome}>Map/ Image goes here</Text>
 
       <View style={styles.button}>
         <Button
           disabled={weatherLoading}
-          title="Get Location"
+          title="Get Location (remove later)"
           onPress={requestLocation}
         />
       </View>
 
-      <Text style={styles.instructions}>Extra functions:</Text>
+
       <View style={styles.button}>
         <Button
-          title="Open App Settings"
+          title="Open Location Settings"
           onPress={() => {
             GetLocation.openSettings();
           }}
@@ -126,7 +193,7 @@ export default function Map(): JSX.Element {
       </View>
 
       <View style={styles.button}>
-        <Button title="Get Weather" onPress={requestWeather} />
+        <Button title="Get Weather (remove later)" onPress={requestWeather} />
       </View>
 
       {weatherLoading && <ActivityIndicator />}
@@ -143,7 +210,27 @@ export default function Map(): JSX.Element {
         <Text style={styles.location}>Error: {weatherError}</Text>
       )}
 
-      <Text style={styles.instructions}>{instructions}</Text>
+
+      <Text>Time:  {time} </Text>
+      <Text>Distance (km): 0.00 </Text>
+      <View>
+        <Button title="Finish Activity" onPress={finishActivity}></Button>
+      </View>
+
+      <View style={styles.button}>
+      {start ? (
+        <Button
+          title="Pause"
+          onPress={pauseActivity}
+        />
+      ) : (
+        <Button
+          title="Start Activity"
+          onPress={startActivity}
+        />
+      )}
+    </View>
+
     </View>
   );
 }
