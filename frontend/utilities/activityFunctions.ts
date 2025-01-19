@@ -1,4 +1,4 @@
-const addActivities = async(activities:{time:number, date:string, distance:number}) => {
+export const addActivities = async(activities:{time:number, date:string, distance:number}) => {
     try {
         const response = await fetch("http://127.0.0.1:5000/add_activity", {
           method: "POST",

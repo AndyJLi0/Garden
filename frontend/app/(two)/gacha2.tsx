@@ -7,7 +7,6 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
-import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native'; // if you're using React Navigation
 import { AntDesign } from '@expo/vector-icons'; // For the "X" icon
 import { Link } from 'expo-router';
@@ -23,15 +22,21 @@ const user = {
 };
 
 const imageData = [
-  { id: '1', uri: require("../../assets/flower.png") },
-  { id: '2', uri: require("../../assets/flower.png") },
-  { id: '3', uri: require("../../assets/flower.png") },
+  { id: '1', uri: require("../../assets/sakurabad.png") },
+  { id: '2', uri: require("../../assets/moonflowerbad.png") },
+  { id: '3', uri: require("../../assets/cactusbad.png") },
 ];
 
 const imageData2 = [
-  { id: '4', uri: require("../../assets/flower.png") },
-  { id: '5', uri: require("../../assets/flower.png") },
-  { id: '6', uri: require("../../assets/flower.png") },
+  { id: '4', uri: require("../../assets/lily.png") },
+  { id: '5', uri: require("../../assets/cactusbad.png") },
+  { id: '6', uri: "https://google.ca" },
+];
+
+const imageData3 = [
+  { id: '4', uri: require("../../assets/bgColour.png") },
+  { id: '5', uri: "https://google.ca" },
+  { id: '6', uri: "https://google.ca" },
 ];
 
 export default function Gacha() {
@@ -91,7 +96,7 @@ export default function Gacha() {
         </View>
         <View style={styles.rectangle}></View>
         <View style={styles.imageShelf}>
-          {imageData.map((item) => (
+          {imageData3.map((item) => (
             <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.id, item.uri)}>
               <Image source={item.uri} style={styles.image} />
             </TouchableOpacity>
@@ -138,7 +143,6 @@ export default function Gacha() {
           onRequestClose={closeLightbox}
         >
           <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
-          <BlurView intensity={40}>
               <View style={styles.modalContent}>
                 {selectedImage && (
                   <Image source={selectedImage} style={styles.modalImage} />
@@ -147,7 +151,6 @@ export default function Gacha() {
                   <Text style={styles.closeText}>Close</Text>
                 </TouchableOpacity>
               </View>
-            </BlurView>
           </TouchableOpacity>
         </Modal>
     </View>

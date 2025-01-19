@@ -16,11 +16,10 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
-import { BlurView } from 'expo-blur';
 
 const user = {
   name: "Jim",
-  collected: 17,
+  collected: 7,
   session: {
     walked: 30,
     time: 150,
@@ -57,6 +56,10 @@ export default function Gacha() {
     openLightbox(uri);
   };
 
+  const setNew = () => {
+    console.log("gey")
+  }
+
   // Function to open the modal with the selected image
   const openLightbox = (uri: ImageSourcePropType) => {
     setSelectedImage(uri);
@@ -69,10 +72,18 @@ export default function Gacha() {
     setSelectedImage(null);
   };
 
-  const total = 50;
+  const total = 20;
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => setNew()}>
+      <Image style={{
+        height: 60,
+        width: 60,
+        marginLeft: 350
+      }} source={require("../../assets/seedS.png")}/>
+      </TouchableOpacity>
+      
       <Text style={styles.title}>Collection</Text>
       <View style={styles.rectangles}>
         <View style={styles.imageShelf}>
