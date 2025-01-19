@@ -52,7 +52,7 @@ export default function RootLayout() {
       <Tabs.Screen
         name="record"
         options={{
-          title: "record",
+          title: "Record",
           tabBarIcon: ({ color }) => <RecordIcon />,
         }}
       />
