@@ -36,6 +36,12 @@
             "node_modules/@expo-google-fonts/josefin-sans/JosefinSans_700Bold.ttf"
           ]
         }
+      ],
+      [
+        "expo-location",
+        {
+          "isAndroidBackgroundLocationEnabled": true
+        }
       ]
     ]
   }
