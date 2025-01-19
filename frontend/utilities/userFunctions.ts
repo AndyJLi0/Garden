@@ -1,6 +1,8 @@
+import CONFIG from "../config";
+
 const getUsers = async () => {
   try {
-    const response = await fetch("http://127.0.0.1:5000/users", {
+    const response = await fetch(`${CONFIG.IP}/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +23,7 @@ const getUsers = async () => {
 // create user 
  export const createUser = async (username: string, email: string) => {
   try {
-    const response = await fetch("http://127.0.0.1:5000/create_user", {
+    const response = await fetch(`${CONFIG.IP}/create_user`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,7 +45,7 @@ const getUsers = async () => {
 // Delete user
 const deleteUser = async (userId: number) => {
   try {
-    const response = await fetch(`http://127.0.0.1:5000/delete_user/${userId}`, {
+    const response = await fetch(`${CONFIG.IP}/delete_user/${userId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -63,7 +65,7 @@ const deleteUser = async (userId: number) => {
 
 const updateUser = async (userId: number, updatedFields: { username?: string; email?: string }) => {
   try {
-    const response = await fetch(`http://127.0.0.1:5000/update_user/${userId}`, {
+    const response = await fetch(`${CONFIG.IP}/update_user/${userId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",

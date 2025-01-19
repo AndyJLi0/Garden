@@ -1,6 +1,8 @@
+import CONFIG from "../config";
+
 export const addActivities = async(activities:{time:number, date:string, distance:number}) => {
     try {
-        const response = await fetch("http://128.189.132.121:5000/add_activity", {
+        const response = await fetch(`${CONFIG.IP}/add_activity`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -25,7 +27,7 @@ export const addActivities = async(activities:{time:number, date:string, distanc
 
 export const getActivities = async() => {
     try {
-        const response = await fetch("http://128.189.132.121:5000/get_activities", {
+        const response = await fetch(`${CONFIG.IP}/get_acitivities`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
