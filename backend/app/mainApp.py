@@ -251,6 +251,14 @@ def get_activities():
 
     return jsonify({"activities": json_activities})
 
+@app.route("/delete_activities", methods=["DELETE"])
+def delete_activities():
+    activities = Activity.query.delete()
+
+    db.session.commit()
+
+    return jsonify({"message": "activities deleted"}), 201
+
 
 if __name__ == "__main__":
     with app.app_context():
