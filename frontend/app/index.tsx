@@ -13,6 +13,7 @@ import {
   textPrimary,
   textSecondary,
 } from "../utilities/themeColors";
+import { convertMinutesToHoursAndMinutes } from "../utilities/convertMinToHandM";
 
 export default function Home() {
   useFonts({
@@ -24,10 +25,11 @@ export default function Home() {
     name: "Jim",
     session: {
       walked: 30,
-      time: 180,
+      time: 150,
     },
   };
 
+  const hm = convertMinutesToHoursAndMinutes(user.session.time);
   const flower = <RoseBlooming />;
 
   return (
@@ -66,24 +68,50 @@ export default function Home() {
       >
         Today
       </Text>
-      <Text
+      <View style={{ flexDirection: "row" }}>
+        <Text
+          style={{
+            fontFamily: "JosefinSans_700Bold",
+            fontSize: header2size,
+            color: textSecondary,
+          }}
+        >
+          Km walked:{" "}
+        </Text>
+        <Text
+          style={{
+            fontFamily: "JosefinSans_400Regular",
+            fontSize: header2size,
+            color: textSecondary,
+          }}
+        >
+          {user.session.walked}km
+        </Text>
+      </View>
+      <View
         style={{
-          fontFamily: "JosefinSans_700Bold",
-          fontSize: header2size,
-          color: textSecondary,
+          flexDirection: "row",
         }}
       >
-        Km walked: {user.session.walked}
-      </Text>
-      <Text
-        style={{
-          fontFamily: "JosefinSans_700Bold",
-          fontSize: header2size,
-          color: textSecondary,
-        }}
-      >
-        Time: {user.session.time}
-      </Text>
+        <Text
+          style={{
+            fontFamily: "JosefinSans_700Bold",
+            fontSize: header2size,
+            color: textSecondary,
+          }}
+        >
+          Time:{" "}
+        </Text>
+        <Text
+          style={{
+            fontFamily: "JosefinSans_400Regular",
+            fontSize: header2size,
+            color: textSecondary,
+          }}
+        >
+          {hm.hours}h {hm.minutes}m
+        </Text>
+      </View>
 
       <StatusBar style="inverted" />
     </View>
