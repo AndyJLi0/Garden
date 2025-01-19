@@ -221,6 +221,14 @@ def get_plants():
 
     return jsonify({"plants": json_plants})
 
+@app.route("/delete_plants", methods=["DELETE"])
+def delete_plants():
+    plants = Plant.query.delete()
+
+    db.session.commit()
+
+    return jsonify({"message": "plants deleted"}), 201
+
 @app.route("/add_activity", methods=["POST"])
 def add_activity():
     time = request.json.get("time")
