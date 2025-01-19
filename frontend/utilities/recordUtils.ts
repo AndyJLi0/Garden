@@ -1,0 +1,1 @@
+// stuff like calc distance, handle timer on record page etc.
