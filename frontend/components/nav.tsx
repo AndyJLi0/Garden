@@ -57,6 +57,7 @@ export default function Nav({
             testID={options.tabBarButtonTestID}
             onPress={onPress}
             onLongPress={onLongPress}
+            key={route.key}
             style={{
               flex: 1,
               alignItems: "center",
