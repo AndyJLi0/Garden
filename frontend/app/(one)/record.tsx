@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, TouchableOpacity, } from 'react-native';
-import MapView from 'react-native-maps';
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { LineLayer, MapView, ShapeSource } from "@rnmapbox/maps";
+import Mapbox from "@rnmapbox/maps";
 import {
   appBeige,
   header1size,
@@ -8,37 +9,50 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
-import { convertMinutesToHoursAndMinutes } from "../../utilities/convertMinToHandM";
 import { OPEN_WEATHER_API_KEY } from "./apiKey";
-import { parseWeatherResponse, parseLocationResponse } from "../../utilities/parseInfo";
-import { addActivities } from "../../utilities/activityFunctions";
+import {
+  parseWeatherResponse,
+  parseLocationResponse,
+} from "../../utilities/parseInfo";
 import GetLocation from "react-native-get-location";
-//import { createUser } from "../utilities/userFunctions";
+import {
+  LocationAccuracy,
+  LocationCallback,
+  LocationSubscription,
+  requestForegroundPermissionsAsync,
+  watchPositionAsync,
+} from "expo-location";
+import { calcDistance } from "../../utilities/recordUtils";
+import { addActivities } from "../../utilities/activityFunctions";
+
+type LatLng = {
+  latitude: number;
+  longitude: number;
+};
+
 const user = {
   name: "Jim",
   session: {
-    walked: 30,
+    walked: 0,
     time: 150,
-    steps: 200
+    steps: 0,
   },
 };
 
-
-// var previouslat = 0;
-// var previouslon = 0;
+Mapbox.setAccessToken(
+  "pk.eyJ1IjoiamltZ2VuZyIsImEiOiJjbG42aWpsZ3QwM3h1Mm5vNmxlNzc0Y3UwIn0.oYMH6baz1zvwQqFrP6pQtQ"
+);
 
 const callDuringRecord = () => {
   //
-}
-
+};
 
 const INITIAL_REGION = {
   latitude: 49.31,
   longitude: -123.2,
   latitudeDelta: 0.005,
-  longitudeDelta: 0.005
+  longitudeDelta: 0.005,
 };
-
 
 const requestLocation = async () => {
   const coords = await GetLocation.getCurrentPosition({
@@ -60,41 +74,49 @@ export default function Map(): JSX.Element {
   const [weatherData, setWeatherData] = useState<any>(null);
   const [weatherLoading, setWeatherLoading] = useState<boolean>(false);
   const [weatherError, setWeatherError] = useState<string | null>(null);
+  const [polylineLatLongs, setPolylineLatLongs] = useState<LatLng[]>([]);
 
   // for timer
   const [start, setStart] = useState(false);
   const [count, setCount] = useState(0);
   const [time, setTime] = useState("00:00:00");
+  const watchLocationRef = useRef<LocationSubscription | null>(null);
+
+  const [end, setEnd] = useState(true);
+
   var initTime = new Date();
-  let interval: number | null = null; // Explicitly type interval as number | null
 
-  const [distance, setDistance] = useState(0);
-
-  const startActivity = () => {
-    // start the timer. starts the periodic location update.
-    setStart(true);
-    startCountingDistance();
-  }
-
-  const startCountingDistance = () => {
-    interval = setInterval(() => {
-      setDistance((prevDistance) => prevDistance + 2); // Increment distance by 5 every 5 seconds
-    }, 2000) as unknown as number; // 5000ms = 5 seconds
+  const updateDistanceAndPolyline: LocationCallback = ({ coords }) => {
+    const { latitude, longitude } = coords;
+    setPolylineLatLongs((prev) => prev.concat([{ latitude, longitude }]));
   };
 
+  const startActivity = async () => {
+    const response = await requestForegroundPermissionsAsync();
+    if (response.granted) {
+      // start the timer. starts the periodic location update.
+      watchLocationRef.current = await watchPositionAsync(
+        {
+          accuracy: LocationAccuracy.BestForNavigation,
+          distanceInterval: 0,
+          timeInterval: 5000,
+        },
+        updateDistanceAndPolyline
+      );
+      setStart(true);
+    }
+  };
 
   const pauseActivity = () => {
     // pauses the timer. pauses the periodic location update.
+    watchLocationRef.current?.remove();
     setStart(false);
-
-  }
-
-  const resetDistance = () => {
-    setDistance(0);
-  }
+  };
 
   const finishActivity = () => {
     // stops timer, saves data to an activity. stops the periodic location update.
+    watchLocationRef.current?.remove();
+    // TODO SAVING
     const [minutes, seconds] = time.split(":").map(Number);
 
     const activityTime = minutes * 60 + seconds;
@@ -104,11 +126,10 @@ export default function Map(): JSX.Element {
       distance: distance,
     };
     addActivities(activity);
-    //createUser("bruh", "bruh@email.com");
-    resetDistance(); //for new activity
-    clearTime();
 
-  }
+    setPolylineLatLongs([]);
+    clearTime();
+  };
   // how the timer should look like
   const showTimer = (ms: number) => {
     const milliseconds = Math.floor((ms % 1000) / 10)
@@ -120,15 +141,27 @@ export default function Map(): JSX.Element {
     const minute = Math.floor((ms / 1000 / 60) % 60)
       .toString()
       .padStart(2, "0");
-    setTime(
-      minute + ":" + second + ":" + milliseconds
-    );
+    setTime(minute + ":" + second + ":" + milliseconds);
   };
   // sets time to zero
   const clearTime = () => {
     setTime("00:00:00");
     setCount(0);
   };
+
+  const distance = polylineLatLongs.reduce((acc, curr, i, arr) => {
+    if (i === 0) {
+      return 0;
+    }
+    const prev = arr[i - 1];
+    const distance = calcDistance(
+      prev.latitude,
+      prev.longitude,
+      curr.latitude,
+      curr.longitude
+    );
+    return acc + distance;
+  }, 0);
 
   // update timer
   useEffect(() => {
@@ -143,16 +176,14 @@ export default function Map(): JSX.Element {
         setTime("00:00:00:00");
         clearInterval(id);
       }
-    }, 16); //10 ms
+    }, 10); //10 ms
     return () => clearInterval(id);
   }, [start]);
-
 
   // somewhere in spain
   var lat = 41.40338;
   var lon = 2.17403;
 
-  // used to get weather data
   const requestWeather = async () => {
     try {
       setWeatherLoading(true);
@@ -181,15 +212,33 @@ export default function Map(): JSX.Element {
     }
   };
 
+  const coords = useMemo<GeoJSON.Geometry>(
+    () => ({
+      type: "LineString",
+      coordinates: polylineLatLongs.map((point) => [
+        point.longitude,
+        point.latitude,
+      ]),
+    }),
+    [polylineLatLongs]
+  );
+
   return (
     <View style={styles.container}>
-
       <Text style={styles.title}>Map</Text>
-      <MapView
-        style={styles.map}
-        initialRegion={INITIAL_REGION}
-        showsUserLocation
-      />
+      <MapView style={styles.map}>
+        {polylineLatLongs.length > 1 ? (
+          <ShapeSource id="lineSource" shape={coords}>
+            <LineLayer
+              id="lineLayer"
+              style={{
+                lineWidth: 2,
+                lineColor: "#ff0000",
+              }}
+            />
+          </ShapeSource>
+        ) : null}
+      </MapView>
 
       <Text
         style={{
@@ -205,7 +254,6 @@ export default function Map(): JSX.Element {
         <Button title="Get Weather (remove later)" onPress={requestWeather} />
       </View> */}
 
-
       <View style={{ flexDirection: "row" }}>
         <Text
           style={{
@@ -214,7 +262,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          Distance travelled:{" "}
+          Km walked:{" "}
         </Text>
         <Text
           style={{
@@ -223,7 +271,7 @@ export default function Map(): JSX.Element {
             color: textSecondary,
           }}
         >
-          {distance}m
+          {distance}km
         </Text>
       </View>
       <View
@@ -272,8 +320,13 @@ export default function Map(): JSX.Element {
         </Text>
       </View>
 
-
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 20 }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginVertical: 20,
+        }}
+      >
         {/* Start Button */}
         {start ? (
           <TouchableOpacity style={styles.button} onPress={pauseActivity}>
@@ -286,7 +339,10 @@ export default function Map(): JSX.Element {
         )}
 
         {/* Finish Button */}
-        <TouchableOpacity style={[styles.button, styles.finishButton]} onPress={finishActivity}>
+        <TouchableOpacity
+          style={[styles.button, styles.finishButton]}
+          onPress={finishActivity}
+        >
           <Text style={styles.buttonText}>Finish</Text>
         </TouchableOpacity>
       </View>
@@ -295,63 +351,64 @@ export default function Map(): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      borderRadius: 20,
-      overflow: 'hidden',
-      //justifyContent: 'center', //vertical align
-      height: "100%",
-      paddingHorizontal: 20,
-      paddingTop: 80,
-      backgroundColor: appBeige,
-    },
-    map: {
-        width: '100%',
-        height: '55%',
-        borderRadius: 20,
-        overflow: 'hidden',
-    },
-    title: {
-      fontFamily: "JosefinSans_700Bold",
-      fontSize: header1size,
-      color: textPrimary,
-      textAlign: "center",
-    },
-    welcome: {
-      fontSize: 20,
-      textAlign: "center",
-      margin: 10,
-    },
-    instructions: {
-      textAlign: "center",
-      color: "#333333",
-      marginBottom: 5,
-    },
-    location: {
-      color: "#333333",
-      marginBottom: 5,
-    },
-    button: {
-      paddingVertical: 12,
-      paddingHorizontal: 16,
-      borderRadius: 20, // Rounded border
-      borderWidth: 2, // Add a border
-      borderColor: "#333333", // Match the color of your text
-      alignItems: "center",
-      flex: 1, // Make buttons take up equal space
-      marginHorizontal: 5, // Add spacing between buttons
-    },
-    startButton: {
-      backgroundColor: "transparent", // Keep it transparent to match textSecondary
-    },
-    finishButton: {
-      backgroundColor: "transparent", // Transparent for consistent design
-    },
-    buttonText: {
-      fontFamily: "JosefinSans_700Bold", // Match your text font
-      fontSize: 18, // Match header2size
-      color: "#333333", // Match textSecondary
-    },
+  container: {
+    flex: 1,
+    borderRadius: 20,
+    overflow: "hidden",
+    //justifyContent: 'center', //vertical align
+    height: "100%",
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    backgroundColor: appBeige,
+  },
+  map: {
+    width: "100%",
+    height: "50%",
+    borderRadius: 20,
+    overflow: "hidden",
+    padding: 20,
+  },
+  title: {
+    fontFamily: "JosefinSans_700Bold",
+    fontSize: header1size,
+    color: textPrimary,
+    textAlign: "center",
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: "center",
+    margin: 10,
+  },
+  instructions: {
+    textAlign: "center",
+    color: "#333333",
+    marginBottom: 5,
+  },
+  location: {
+    color: "#333333",
+    marginBottom: 5,
+  },
+  button: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 20, // Rounded border
+    borderWidth: 2, // Add a border
+    borderColor: "#333333", // Match the color of your text
+    alignItems: "center",
+    flex: 1, // Make buttons take up equal space
+    marginHorizontal: 5, // Add spacing between buttons
+  },
+  startButton: {
+    backgroundColor: "transparent", // Keep it transparent to match textSecondary
+  },
+  finishButton: {
+    backgroundColor: "transparent", // Transparent for consistent design
+  },
+  buttonText: {
+    fontFamily: "JosefinSans_700Bold", // Match your text font
+    fontSize: 18, // Match header2size
+    color: "#333333", // Match textSecondary
+  },
 });
 
 // import React, { useState } from "react";
