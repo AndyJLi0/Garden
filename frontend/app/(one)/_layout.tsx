@@ -8,6 +8,7 @@ import MapIcon from "../../components/SVGs/MapIcon";
 import ProfileIcon from "../../components/SVGs/ProfileIcon";
 import { StatusBar } from "expo-status-bar";
 import { useRef, useEffect } from "react";
+import ChestIcon from "../../components/SVGs/ChestIcon";
 //import { callDuringRecord } from "../utilities/recordUtils";
 
 export default function RootLayout() {
@@ -60,7 +61,7 @@ export default function RootLayout() {
         name="inventory"
         options={{
           title: "Inventory",
-          tabBarIcon: ({ color }) => <RecordIcon />,
+          tabBarIcon: ({ color }) => <ChestIcon />,
         }}
       />
       <Tabs.Screen

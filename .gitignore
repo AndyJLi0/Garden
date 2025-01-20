@@ -138,3 +138,5 @@ android/
 
 # android studio confiuration files
 .idea/
+
+.env

@@ -1,36 +1,67 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
 import {
   appBeige,
   header1size,
   header2size,
   textPrimary,
 } from "../../utilities/themeColors";
-import { Link } from 'expo-router';
-import { Modal } from 'react-native';
+import { Link, usePathname } from "expo-router";
+import { Modal } from "react-native";
 const user = {
   name: "Jim",
   profilePic: "",
   session: {
     walked: 30,
     time: 150,
-    steps: 200
+    steps: 200,
   },
 };
-import { useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react'
-import { ImageSourcePropType } from 'react-native';
-import { getActivities } from '../../utilities/activityFunctions';
+import {
+  useState,
+  useEffect,
+  JSXElementConstructor,
+  Key,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+} from "react";
+import { ImageSourcePropType } from "react-native";
+import { getActivities } from "../../utilities/activityFunctions";
 
 const imageData = [
-  { id: '1', uri: require("../../assets/profile.png") },
-  { id: '2', uri: require("../../assets/profile.png") },
-  { id: '3', uri: require("../../assets/profile.png") },
+  { id: "1", uri: require("../../assets/profile.png") },
+  { id: "2", uri: require("../../assets/profile.png") },
+  { id: "3", uri: require("../../assets/profile.png") },
 ];
 
 const recordData = [
-  { id: '1', uri: require("../../assets/ss1.png"), text: "01.19.2025           0.02km" },
-  { id: '2', uri: require("../../assets/ss2.png"), text: "12.23.2024              1km" },
-  { id: '3', uri: require("../../assets/flower.png"), text: "10.15.2024              3km" },
-  { id: '4', uri: require("../../assets/flower.png"), text: "09.03.2024              5km" },
+  {
+    id: "1",
+    uri: require("../../assets/ss1.png"),
+    text: "01.19.2025           0.02km",
+  },
+  {
+    id: "2",
+    uri: require("../../assets/ss2.png"),
+    text: "12.23.2024              1km",
+  },
+  {
+    id: "3",
+    uri: require("../../assets/flower.png"),
+    text: "10.15.2024              3km",
+  },
+  {
+    id: "4",
+    uri: require("../../assets/flower.png"),
+    text: "09.03.2024              5km",
+  },
 ];
 
 type Activity = {
@@ -38,22 +69,23 @@ type Activity = {
   date: string;
   distance: number;
   id: number;
-}
+};
 
 export default function Profile() {
   // Edit profile action (just logs for now)
   const handleEditProfile = () => {
-    console.log('Edit profile clicked');
+    console.log("Edit profile clicked");
     // You can add functionality here to navigate to an edit profile screen
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<ImageSourcePropType | null>(null);
+  const [selectedImage, setSelectedImage] =
+    useState<ImageSourcePropType | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
 
   // Handle click event for each image
   const handleImageClick = (uri: ImageSourcePropType) => {
-    openLightbox(uri)
+    openLightbox(uri);
   };
 
   // Function to open the modal with the selected image
@@ -79,9 +111,11 @@ export default function Profile() {
     }
   };
 
+  const pathname = usePathname();
+
   useEffect(() => {
     fetchActivities();
-  }, []);
+  }, [pathname]);
 
   return (
     <View style={styles.container}>
@@ -89,7 +123,10 @@ export default function Profile() {
         <Text style={styles.title}>Profile</Text>
         {/* Profile Picture */}
         <View style={styles.profileHeader}>
-          <Image source={require("../../assets/profile.png")} style={styles.profileImage} />
+          <Image
+            source={require("../../assets/profile.png")}
+            style={styles.profileImage}
+          />
         </View>
 
         {/* User Name */}
@@ -118,7 +155,9 @@ export default function Profile() {
                 <Text style={styles.recordText}>ID: {item.id}</Text>
                 <Text style={styles.recordText}>Time: {item.time}s</Text>
                 <Text style={styles.recordText}>Date: {item.date}</Text>
-                <Text style={styles.recordText}>Distance: {item.distance} meters</Text>
+                <Text style={styles.recordText}>
+                  Distance: {item.distance} meters
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -137,12 +176,18 @@ export default function Profile() {
         animationType="fade"
         onRequestClose={closeLightbox}
       >
-        <TouchableOpacity style={styles.modalBackground} onPress={closeLightbox}>
+        <TouchableOpacity
+          style={styles.modalBackground}
+          onPress={closeLightbox}
+        >
           <View style={styles.modalContent}>
             {selectedImage && (
               <Image source={selectedImage} style={styles.modalImage} />
             )}
-            <TouchableOpacity style={styles.closeButton} onPress={closeLightbox}>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={closeLightbox}
+            >
               <Text style={styles.closeText}>Close</Text>
             </TouchableOpacity>
           </View>
@@ -154,9 +199,9 @@ export default function Profile() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,                      // Ensures the container takes up the full screen
-    alignItems: 'center',
-    justifyContent: 'flex-start',
+    flex: 1, // Ensures the container takes up the full screen
+    alignItems: "center",
+    justifyContent: "flex-start",
     backgroundColor: appBeige,
     paddingTop: 80,
     paddingBottom: 80,
@@ -188,9 +233,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   imageShelf: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
   },
   image: {
     width: 100,
@@ -217,29 +262,28 @@ const styles = StyleSheet.create({
     alignContent: "center",
     // marginTop: 30,
     // marginLeft: 20,
-
   },
   scrollViewContent: {
-    alignItems: 'center', // Center content inside ScrollView
-    paddingTop: 20,       // Optional, adds padding to the top of the ScrollView
+    alignItems: "center", // Center content inside ScrollView
+    paddingTop: 20, // Optional, adds padding to the top of the ScrollView
   },
   modalBackground: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.7)", // Semi-transparent background
   },
   modalContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'white',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
   },
   modalImage: {
     width: 300,
     height: 300,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   closeButton: {
     marginTop: 20,
@@ -249,9 +293,9 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   closeText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   // editButton: {
   //   backgroundColor: '#3498db',

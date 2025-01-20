@@ -16,6 +16,7 @@ import {
   textPrimary,
   textSecondary,
 } from "../../utilities/themeColors";
+import { StatusBar } from "expo-status-bar";
 
 const user = {
   name: "Jim",
@@ -28,21 +29,21 @@ const user = {
 };
 
 const imageData = [
-  { id: '1', uri: require("../../assets/sakuragood.png") },
-  { id: '2', uri: require("../../assets/moonflowergood.png") },
-  { id: '3', uri: require("../../assets/cactusgood.png") },
+  { id: "1", uri: require("../../assets/sakuragood.png") },
+  { id: "2", uri: require("../../assets/moonflowergood.png") },
+  { id: "3", uri: require("../../assets/cactusgood.png") },
 ];
 
 const imageData2 = [
-  { id: '4', uri: require("../../assets/lily.png") },
-  { id: '5', uri: require("../../assets/sunflowerbad.png") },
-  { id: '6', uri: require("../../assets/flower.png") },
+  { id: "4", uri: require("../../assets/lily.png") },
+  { id: "5", uri: require("../../assets/sunflowerbad.png") },
+  { id: "6", uri: require("../../assets/flower.png") },
 ];
 
 const imageData3 = [
-  { id: '4', uri: require("../../assets/daisy.png") },
-  { id: '5', uri: "https://google.ca" },
-  { id: '6', uri: "https://google.ca" },
+  { id: "4", uri: require("../../assets/daisy.png") },
+  { id: "5", uri: "https://google.ca" },
+  { id: "6", uri: "https://google.ca" },
 ];
 
 export default function Gacha() {
@@ -57,8 +58,8 @@ export default function Gacha() {
   };
 
   const setNew = () => {
-    console.log("gey")
-  }
+    console.log("gey");
+  };
 
   // Function to open the modal with the selected image
   const openLightbox = (uri: ImageSourcePropType) => {
@@ -76,14 +77,19 @@ export default function Gacha() {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="inverted" backgroundColor={appBeige} />
+
       <TouchableOpacity onPress={() => setNew()}>
-      <Image style={{
-        height: 60,
-        width: 60,
-        marginLeft: 350
-      }} source={require("../../assets/seedS.png")}/>
+        <Image
+          style={{
+            height: 60,
+            width: 60,
+            marginLeft: 350,
+          }}
+          source={require("../../assets/seedS.png")}
+        />
       </TouchableOpacity>
-      
+
       <Text style={styles.title}>Collection</Text>
       <View style={styles.rectangles}>
         <View style={styles.imageShelf}>
@@ -110,7 +116,10 @@ export default function Gacha() {
         <View style={styles.rectangle}></View>
         <View style={styles.imageShelf}>
           {imageData3.map((item) => (
-            <TouchableOpacity key={item.id} onPress={() => handleImageClick(item.id, item.uri)}>
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleImageClick(item.id, item.uri)}
+            >
               <Image source={item.uri} style={styles.image} />
             </TouchableOpacity>
           ))}
@@ -123,7 +132,7 @@ export default function Gacha() {
           fontFamily: "JosefinSans_700Bold",
           fontSize: header2size,
           color: textPrimary,
-          marginTop: 20
+          marginTop: 20,
         }}
       >
         Spring Set
@@ -205,8 +214,8 @@ const styles = StyleSheet.create({
     justifyContent: "center", // Center images horizontally
   },
   image: {
-    width: 100,
-    height: 100,
+    width: 80,
+    height: 80,
     marginLeft: 10,
     marginRight: 10,
     marginTop: 10,
@@ -226,7 +235,7 @@ const styles = StyleSheet.create({
   modalContent: {
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: appBeige,
     padding: 20,
     borderRadius: 10,
   },
